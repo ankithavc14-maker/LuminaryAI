@@ -155,7 +155,7 @@ async def stream_gemini(prompt: str):
         return
     try:
         response = gemini_client.models.generate_content_stream(
-            model="gemini-2.5-flash",
+            model="gemini-3.6-flash",
             contents=prompt,
         )
         for chunk in response:
@@ -196,7 +196,7 @@ async def get_gemini(prompt: str) -> str:
         raise HTTPException(status_code=500, detail="GEMINI_API_KEY not configured.")
     try:
         response = gemini_client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-3.6-flash",
             contents=prompt,
         )
         return response.text.strip()

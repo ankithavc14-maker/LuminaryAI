@@ -1,5 +1,15 @@
 import { useState, useRef } from 'react'
 
+const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '')
+
+const getApiUrl = (url) => {
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url
+  }
+
+  return `${API_BASE}${url}`
+}
+
 export function useStream() {
   const [text, setText] = useState('')
   const [loading, setLoading] = useState(false)
@@ -8,6 +18,7 @@ export function useStream() {
 
   const stream = async (url, body) => {
     if (abortRef.current) abortRef.current.abort()
+
     abortRef.current = new AbortController()
 
     setText('')
@@ -15,7 +26,7 @@ export function useStream() {
     setLoading(true)
 
     try {
-      const res = await fetch(url, {
+      const res = await fetch(getApiUrl(url), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -33,7 +44,9 @@ export function useStream() {
 
       while (true) {
         const { done, value } = await reader.read()
+
         if (done) break
+
         const chunk = decoder.decode(value, { stream: true })
         full += chunk
         setText(full)
@@ -47,9 +60,18 @@ export function useStream() {
     }
   }
 
-  const reset = () => { setText(''); setError('') }
+  const reset = () => {
+    setText('')
+    setError('')
+  }
 
-  return { text, loading, error, stream, reset }
+  return {
+    text,
+    loading,
+    error,
+    stream,
+    reset,
+  }
 }
 
 export function useJson() {
@@ -61,24 +83,32 @@ export function useJson() {
     setData(null)
     setError('')
     setLoading(true)
+
     try {
-      const res = await fetch(url, {
+      const res = await fetch(getApiUrl(url), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       })
+
       if (!res.ok) {
         const err = await res.json().catch(() => ({}))
         throw new Error(err.detail || `HTTP ${res.status}`)
       }
+
       const json = await res.json()
       setData(json)
     } catch (e) {
-      setError(e.message)
+      setError(e.message || 'Something went wrong')
     } finally {
       setLoading(false)
     }
   }
 
-  return { data, loading, error, fetch: fetch_ }
+  return {
+    data,
+    loading,
+    error,
+    fetch: fetch_,
+  }
 }
