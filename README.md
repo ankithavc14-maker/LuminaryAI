@@ -37,12 +37,15 @@ LuminaryAI is built as a practical AI engineering project rather than a single c
 flowchart LR
     U[User] --> F[React + Vite Frontend]
     F -->|REST / Streaming| B[FastAPI Backend]
-    B --> L[LLM Provider Layer]
+
+    B --> L[LLM Layer]
     L --> G[Google Gemini]
     L --> O[OpenAI]
+
     B --> R[RAG Pipeline]
     R --> E[Sentence Transformers]
     E --> V[(ChromaDB)]
+
     B --> A[Agentic Workflow]
     B --> D[Document / ETL Pipeline]
 ```
