@@ -70,14 +70,39 @@ export function OutputBox({ text, loading, error, className = '', markdown = fal
   )
 }
 
-export function PageHeader({ tag, tagClass = 'tag-coral', title, desc, icon: Icon }) {
+export function PageHeader({
+  tag,
+  tagClass = 'tag-coral',
+  title,
+  desc,
+  icon: Icon,
+}) {
+  const isDayTaskTag =
+    typeof tag === 'string' &&
+    (/^day\b/i.test(tag.trim()) || /task/i.test(tag))
+
   return (
     <div style={{ marginBottom: 28 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-        {Icon && <Icon size={16} color="var(--coral)" />}
-        <span className={`tag ${tagClass}`}>{tag}</span>
-      </div>
+      {!isDayTaskTag && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            marginBottom: 10,
+          }}
+        >
+          {Icon && <Icon size={16} color="var(--coral)" />}
+          {tag && (
+            <span className={`tag ${tagClass}`}>
+              {tag}
+            </span>
+          )}
+        </div>
+      )}
+
       <h1 className="section-title">{title}</h1>
+
       <p className="section-desc">{desc}</p>
     </div>
   )

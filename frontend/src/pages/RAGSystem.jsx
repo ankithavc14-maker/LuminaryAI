@@ -2,6 +2,9 @@ import { useState, useRef } from 'react'
 import { Database, Upload, Search, FileText, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
 import { PageHeader, FormField, ActionRow, OutputBox, CopyButton, DownloadButton } from '../components/UI'
 import { useStream } from '../hooks/useStream'
+const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '')
+
+const apiUrl = (path) => `${API_BASE}${path}`
 
 export default function RAGSystem() {
   // Pipeline / ingest state
@@ -32,7 +35,7 @@ export default function RAGSystem() {
       const form = new FormData()
       form.append('file', file)
       form.append('chunk_size', chunkSize)
-      const res = await fetch('/api/pipeline/ingest-pdf', { method: 'POST', body: form })
+      const res = await fetch(apiUrl('/api/pipeline/ingest-pdf'), { method: 'POST', body: form })
       if (!res.ok) {
         const e = await res.json()
         throw new Error(e.detail || 'Ingest failed')
@@ -54,7 +57,7 @@ export default function RAGSystem() {
     setIngestError('')
     setIngestResult(null)
     try {
-      const res = await fetch('/api/pipeline/ingest-text', {
+      const res = await fetch(apiUrl('/api/pipeline/ingest-text'),{
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: rawText, source_name: sourceName || 'manual_input', chunk_size: chunkSize }),
@@ -230,7 +233,7 @@ export default function RAGSystem() {
             </FormField>
             <FormField label="AI Provider">
               <select className="input" value={provider} onChange={e => setProvider(e.target.value)}>
-                <option value="gemini">Gemini 2.5 Flash</option>
+                <option value="gemini">Gemini 3.6 Flash</option>
                 <option value="openai">OpenAI GPT-4o Mini</option>
               </select>
             </FormField>

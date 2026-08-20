@@ -2,7 +2,9 @@ import { useState, useRef, useEffect } from 'react'
 import { Bot, Play, Eye, Zap, ChevronRight, Loader2 } from 'lucide-react'
 import { PageHeader, FormField, ActionRow, CopyButton, DownloadButton } from '../components/UI'
 import ReactMarkdown from 'react-markdown'
+const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '')
 
+const apiUrl = (path) => `${API_BASE}${path}`
 export default function AgentAI() {
   const [goal, setGoal] = useState('')
   const [context, setContext] = useState('')
@@ -24,7 +26,7 @@ export default function AgentAI() {
     setPreviewLoading(true)
     setPlanPreview(null)
     try {
-      const res = await fetch('/api/agent/plan-only', {
+      const res = await fetch(apiUrl('/api/agent/plan-only'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ goal, context, provider, max_steps: maxSteps }),
@@ -48,7 +50,7 @@ export default function AgentAI() {
     abortRef.current = new AbortController()
 
     try {
-      const res = await fetch('/api/agent/run', {
+      const res = await fetch(apiUrl('/api/agent/run'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ goal, context, provider, max_steps: maxSteps }),
@@ -162,7 +164,7 @@ export default function AgentAI() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
           <FormField label="AI Provider">
             <select className="input" value={provider} onChange={e => setProvider(e.target.value)}>
-              <option value="gemini">Gemini 2.5 Flash</option>
+              <option value="gemini">Gemini 3.6 Flash</option>
               <option value="openai">OpenAI GPT-4o Mini</option>
             </select>
           </FormField>

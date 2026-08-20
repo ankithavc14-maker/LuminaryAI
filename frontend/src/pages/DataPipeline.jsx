@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { Database, Upload, FileText, Layers, CheckCircle, ArrowRight, RefreshCw } from 'lucide-react'
 import { PageHeader, FormField, ActionRow } from '../components/UI'
+const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '')
+
+const apiUrl = (path) => `${API_BASE}${path}`
 
 export default function DataPipeline() {
   const [file, setFile] = useState(null)
@@ -38,11 +41,11 @@ export default function DataPipeline() {
         const form = new FormData()
         form.append('file', file)
         form.append('chunk_size', chunkSize)
-        const res = await fetch('/api/pipeline/ingest-pdf', { method: 'POST', body: form })
+        const res = await fetch(apiUrl('/api/pipeline/ingest-pdf'), { method: 'POST', body: form })
         if (!res.ok) { const e = await res.json(); throw new Error(e.detail) }
         data = await res.json()
       } else {
-        const res = await fetch('/api/pipeline/ingest-text', {
+        const res = await fetch(apiUrl('/api/pipeline/ingest-text'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ text: rawText, source_name: sourceName || 'input', chunk_size: chunkSize }),
@@ -59,7 +62,7 @@ export default function DataPipeline() {
       setCollections(prev => [...prev, data])
 
       // Refresh from server
-      const listRes = await fetch('/api/pipeline/collections')
+      const listRes = await fetch(apiUrl('/api/pipeline/collections'))
       const listData = await listRes.json()
       setCollections(listData.collections)
 
