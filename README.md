@@ -32,11 +32,10 @@ LuminaryAI is built as a practical AI engineering project rather than a single c
 - ⚡ Streaming AI responses
 
 ## 🏗️ Architecture
-
 ```mermaid
-flowchart LR
-    U[User] --> F[React + Vite Frontend]
-    F -->|REST / Streaming| B[FastAPI Backend]
+graph TD
+    U[User] --> F[React Vite Frontend]
+    F --> B[FastAPI Backend]
 
     B --> L[LLM Layer]
     L --> G[Google Gemini]
@@ -44,12 +43,11 @@ flowchart LR
 
     B --> R[RAG Pipeline]
     R --> E[Sentence Transformers]
-    E --> V[(ChromaDB)]
+    E --> C[ChromaDB]
 
-    B --> A[Agentic Workflow]
-    B --> D[Document / ETL Pipeline]
+    B --> A[Agentic AI]
+    B --> D[Document ETL Pipeline]
 ```
-
 ## 🛠️ Tech Stack
 
 | Layer | Technologies |
